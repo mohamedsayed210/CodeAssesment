@@ -1,0 +1,153 @@
+﻿@model CodeAssesment.Models.Users
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<div class="col-md-10 mx-auto py-4">
+    <div class="card">
+        <div class="card-header bg-primary text-uppercase text-white">
+            <h1>Edit Users</h1>
+            
+        </div>
+        <div class="card-body">
+            @*<form asp-action="Edit">*@
+            <form method="post" enctype="multipart/form-data" asp-controller="Registration" asp-action="Edit">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row" hidden>
+                    <div class="col-md-6">
+                        <div class="form-group" hidden>
+                            <label asp-for="UserId" class="control-label"></label>
+                            <input asp-for="UserId" class="form-control" />
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UserFirstName" class="control-label"></label>
+                            <input asp-for="UserFirstName" class="form-control" />
+                            <span asp-validation-for="UserFirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UserLastName" class="control-label"></label>
+                            <input asp-for="UserLastName" class="form-control" />
+                            <span asp-validation-for="UserLastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" hidden>
+                            <label asp-for="UserEmail" class="control-label"></label>
+                            <input asp-for="UserEmail" class="form-control" />
+                            <span asp-validation-for="UserEmail" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UserMobile" class="control-label"></label>
+                            <input asp-for="UserMobile" class="form-control" />
+                            <span asp-validation-for="UserMobile" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="attach-div">
+                            <br />
+                            <input asp-for="UserDocument" type="file" id="UserDoc" name="UserDocument" hidden onchange="ProcessFile(event);" />
+                            <button type="button" class="btn btn-sm btn-outline-info" onclick="document.getElementById('UserDoc').click()">
+                                <i class="fa fa-upload"></i>
+                                Upload   Document
+                            </button>
+                            <p id="UserFileName"></p>
+                            @if (Model.UserDocument != null && Model.UserDocument != string.Empty)
+                            {
+                                <a href="@Url.Action("DownloadFile","Registration",new {FileName=Model.UserDocument})" class="btn btn-sm btn-outline-info" target="_blank">
+                                    <i class="fa fa-file"></i>
+                                    Download Document
+                                </a>
+                                <a href="@Url.Action("DeleteDocument", "Registration", new { FileName = Model.UserDocument,user_Id=Model.UserId })" class="btn btn-danger">
+                                    <i class="fa fa-file"></i>
+                                    Delete Document
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="UserImgProfile" class="control-label">User Profile Image</label>
+                        <div class="custom-file">
+                            <input asp-for="UserImgProfile" class="custom-file-input" id="customFile" type="file" onchange="show(this)">
+
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="UserImgProfile" class="control-label" style="color:rebeccapurple;">Profile Image</label>
+
+                    <div>
+                        <img id="user_img" height="250" width="250" style="border:solid" src="@Model.UserImgProfile" />
+                    </div>
+
+                    <hr />
+
+                </div>
+                @if (Model.UserImgProfile != null && Model.UserImgProfile !=string.Empty) 
+                {
+                    <a href="@Url.Action("DeleteImageProfile", "Registration", new { FileName = Model.UserImgProfile,user_Id=Model.UserId })" class="btn btn-danger" >
+                        <i class="fa fa-file"></i>
+                        Delete Image
+                    </a>
+                }
+                    <hr />
+                    <div class="form-group">
+                        <input type="submit" value="submit" class="btn btn-sm btn-primary rounded-0 text-uppercase" />
+                        <a asp-action="Index" class="btn btn-sm btn-primary rounded-0 text-uppercase"><i class="fas fa-fast-backward"></i> Back to List</a>
+                    </div>
+
+                </form>
+</div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script type="text/javascript">
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+            //to show selected Image Profile on Image Box
+            function show(input) {
+                debugger;
+                if (input.files && input.files[0]) {
+                    var filerdr = new FileReader();
+                    filerdr.onload = function (e) {
+                        $('#user_img').attr('src', e.target.result);
+                    }
+                    filerdr.readAsDataURL(input.files[0]);
+                }
+            }
+            //to show selected Documnet name 
+            function ProcessFile(e) {
+                const files = e.target.files;
+                const file = files[0];
+                const fileName = file.name;
+                document.getElementById('UserFileName').innerHTML = fileName;
+                EngineerFile = file;
+            }
+        </script>
+    }
